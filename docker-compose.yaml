@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: ./Dockerfile
+    container_name: django_backend
+    ports:
+      - '8000:8000'
+    environment:
+      - DJANGO_SETTINGS_MODULE=mapbackend.settings
+    volumes:
+      - ./back-end:/app
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./map-experiment
+      dockerfile: ./Dockerfile
+    container_name: nextjs_frontend
+    ports:
+      - '3000:3000'
+    environment:
+      - GEO_DATA_SERVER_URI=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
